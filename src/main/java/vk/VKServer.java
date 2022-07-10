@@ -2,15 +2,16 @@ package vk;
 
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
+import logic.dialog.Chat;
 
 public class VKServer {
     public static VKConfig vkConfig;
-    private static MessageOperation messageOperation;
+    private static Chat chat;
 
     static {
         try {
             vkConfig = new VKConfig();
-            messageOperation = new MessageOperation(vkConfig);
+            chat = new Chat(vkConfig);
         } catch (ApiException | ClientException e) {
             e.printStackTrace();
         }
@@ -20,7 +21,7 @@ public class VKServer {
         System.out.println("Running server");
         while (true) {
             Thread.sleep(500);
-            messageOperation.startChat();
+            chat.startChat();
         }
     }
 }
