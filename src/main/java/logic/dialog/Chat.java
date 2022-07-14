@@ -9,6 +9,7 @@ import com.vk.api.sdk.objects.users.Fields;
 import com.vk.api.sdk.objects.users.responses.GetResponse;
 import com.vk.api.sdk.queries.messages.MessagesGetLongPollHistoryQuery;
 import logic.commands.Weather;
+import org.jsoup.HttpStatusException;
 import vk.VKConfig;
 
 import java.io.IOException;
@@ -18,12 +19,12 @@ import java.util.Random;
 
 public class Chat {
     private VKConfig config;
-    private VkApiClient vk;
+    private final VkApiClient vk;
     private int ts;
-    private GroupActor actor;
-    private int maxMsgId = -1;
-    private Random random = new Random();
-    Keyboard keyboard = new Keyboard();
+    private final GroupActor actor;
+    private final int maxMsgId = -1;
+    private final Random random = new Random();
+    private final Keyboard keyboard = new Keyboard();
 
     public Chat(VKConfig config) {
         this.config = config;
@@ -36,16 +37,18 @@ public class Chat {
     private void keyboard() {
         List<List<KeyboardButton>> allKey = new ArrayList<>();
         List<KeyboardButton> line1 = new ArrayList<>();
+        List<KeyboardButton> line2 = new ArrayList<>();
         line1.add(new KeyboardButton()
                 .setAction(new KeyboardButtonAction().setLabel("Привет").setType(TemplateActionTypeNames.TEXT))
                 .setColor(KeyboardButtonColor.POSITIVE));
         line1.add(new KeyboardButton()
-                .setAction(new KeyboardButtonAction().setLabel("Город").setType(TemplateActionTypeNames.TEXT))
+                .setAction(new KeyboardButtonAction().setLabel("Погода в моём городе").setType(TemplateActionTypeNames.TEXT))
                 .setColor(KeyboardButtonColor.POSITIVE));
-        line1.add(new KeyboardButton()
-                .setAction(new KeyboardButtonAction().setLabel("Погода").setType(TemplateActionTypeNames.TEXT))
+        line2.add(new KeyboardButton()
+                .setAction(new KeyboardButtonAction().setLabel("Погода в другом городе").setType(TemplateActionTypeNames.TEXT))
                 .setColor(KeyboardButtonColor.POSITIVE));
         allKey.add(line1);
+        allKey.add(line2);
         keyboard.setButtons(allKey);
     }
 
@@ -67,62 +70,85 @@ public class Chat {
                 String userCity = String.valueOf(userInfo.get(0).getCity());
                 System.out.println(userCity);
 
-                switch (userText) {
-                    case "hello":
-                    case "привет":
+                if (userText.equals("hello") || userText.equals("привет")) {
+                    vk.messages()
+                            .send(actor)
+                            .message("Привет, " + userFirstName)
+                            .userId(userId)
+                            .randomId(random.nextInt(10000))
+                            .execute();
+                } else if (userText.equals("кнопки")) {
+                    vk.messages()
+                            .send(actor)
+                            .message("Держи кнопки")
+                            .userId(message.getFromId())
+                            .randomId(random.nextInt(10000))
+                            .keyboard(keyboard)
+                            .execute();
+                } else if (userText.equals("погода в моём городе")) {
+                    if (userCity.equals("null")) {
                         vk.messages()
                                 .send(actor)
-                                .message("Привет, " + userFirstName)
+                                .message("К сожалению информация о городе скрыта в твоём профиле")
                                 .userId(userId)
                                 .randomId(random.nextInt(10000))
                                 .execute();
-                        break;
-                    case "кнопки":
-                        vk.messages()
-                                .send(actor)
-                                .message("Держи кнопки")
-                                .userId(message.getFromId())
-                                .randomId(random.nextInt(10000))
-                                .keyboard(keyboard)
-                                .execute();
-                        break;
-                    case "город":
-                        if (userCity.equals("null")) {
-                            vk.messages()
-                                    .send(actor)
-                                    .message("К сожалению информация о городе скрыта в твоём профиле")
-                                    .userId(userId)
-                                    .randomId(random.nextInt(10000))
-                                    .execute();
-                        } else {
-                            vk.messages()
-                                    .send(actor)
-                                    .message("Твой город: " + userInfo.get(0).getCity().getTitle())
-                                    .userId(userId)
-                                    .randomId(random.nextInt(10000))
-                                    .execute();
-                        }
-                        break;
-                    case "погода":
+                    } else {
                         Weather weather = null;
                         try {
-                            weather = new Weather();
+                            weather = new Weather(userInfo.get(0).getCity().getTitle());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        assert weather != null;
+                        try {
+                            vk.messages()
+                                    .send(actor)
+                                    .message(weather.getWeather())
+                                    .userId(userId)
+                                    .randomId(random.nextInt(10000))
+                                    .execute();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else if (userText.equals("погода в другом городе")) {
+                    vk.messages()
+                            .send(actor)
+                            .message("Набери сообщение по типу:" + "\n" + "Погода 'Интересующий вас город'" + "\n" + "Например: Погода Москва")
+                            .userId(userId)
+                            .randomId(random.nextInt(10000))
+                            .execute();
+                } else if (userText.matches("погода [а-я]+(\\s|-)?[а-я]*")) {
+                    String city = userText.substring(7);
+                    System.out.println(city);
+                    Weather weather = null;
+                    try {
+                        weather = new Weather(city);
+                    } catch (HttpStatusException e) {
+                        vk.messages().send(actor).message("Для города " + city + " информация о погоде отсутствует")
+                                .userId(message.getFromId())
+                                .randomId(random.nextInt(10000))
+                                .execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    assert weather != null;
+                    try {
                         vk.messages()
                                 .send(actor)
                                 .message(weather.getWeather())
                                 .userId(userId)
                                 .randomId(random.nextInt(10000))
                                 .execute();
-                        break;
-                    default:
-                        vk.messages().send(actor).message("Я не понимаю тебя:(" + "\n" + "Попробуй введи слово 'Кнопки' и воспользуйся их функционалом")
-                                .userId(message.getFromId())
-                                .randomId(random.nextInt(10000))
-                                .execute();
-                        break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    vk.messages().send(actor).message("Я не понимаю тебя:(" + "\n" + "Попробуй введи слово 'Кнопки' и воспользуйся их функционалом")
+                            .userId(message.getFromId())
+                            .randomId(random.nextInt(10000))
+                            .execute();
                 }
                 ts = vk.messages().getLongPollServer(actor).execute().getTs();
             }
