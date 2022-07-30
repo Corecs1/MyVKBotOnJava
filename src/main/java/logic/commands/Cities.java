@@ -22,6 +22,6 @@ public class Cities {
     }
 
     public String findCity(String ruCity) {
-        return cities.getOrDefault(ruCity.toLowerCase(), "Не найдено");
+        return cities.getOrDefault(ruCity.toLowerCase(), null);
     }
 }

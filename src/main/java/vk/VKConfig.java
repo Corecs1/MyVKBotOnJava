@@ -58,4 +58,8 @@ public class VKConfig {
     public int getMaxMsgId() {
         return maxMsgId;
     }
+
+    public static void setTs(int ts) {
+        VKConfig.ts = ts;
+    }
 }

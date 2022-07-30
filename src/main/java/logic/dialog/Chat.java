@@ -9,6 +9,8 @@ import com.vk.api.sdk.objects.users.Fields;
 import com.vk.api.sdk.objects.users.responses.GetResponse;
 import com.vk.api.sdk.queries.messages.MessagesGetLongPollHistoryQuery;
 import logic.commands.Weather;
+import logic.commands.messages.HelloMessage;
+import logic.commands.messages.ResponseMessage;
 import org.jsoup.HttpStatusException;
 import vk.VKConfig;
 
@@ -62,7 +64,8 @@ public class Chat {
                 List<GetResponse> userInfo = vk.users()
                         .get(actor)
                         .userIds(String.valueOf(userId))
-                        .fields(Fields.CITY).execute();
+                        .fields(Fields.CITY)
+                        .execute();
                 System.out.println(userInfo);
                 String userText = message.getText().toLowerCase();
                 String userFirstName = userInfo.get(0).getFirstName();
@@ -126,7 +129,9 @@ public class Chat {
                     try {
                         weather = new Weather(city);
                     } catch (HttpStatusException e) {
-                        vk.messages().send(actor).message("Для города " + city + " информация о погоде отсутствует")
+                        vk.messages()
+                                .send(actor)
+                                .message("Для города " + city + " информация о погоде отсутствует")
                                 .userId(message.getFromId())
                                 .randomId(random.nextInt(10000))
                                 .execute();

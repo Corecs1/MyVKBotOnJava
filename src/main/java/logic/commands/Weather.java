@@ -1,5 +1,6 @@
 package logic.commands;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -21,7 +22,7 @@ public class Weather {
     }
 
     public String getWeather() throws IOException {
-        if (city.equals("Не найдено")) {
+        if (city == null) {
             return "К сожалению не удалось найти такого города в базе, либо конструкция запроса была не верной";
         }
         return parse();
