@@ -1,4 +1,4 @@
-package logic.commands;
+package logic.commands.messages;
 
 public enum MessageTypes {
     HELLO,
