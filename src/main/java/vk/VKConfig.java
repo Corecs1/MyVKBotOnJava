@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class VKConfig {
-    private static VkApiClient vk;
+    private VkApiClient vk;
     private static int ts;
-    private static GroupActor actor;
+    private GroupActor actor;
     private int maxMsgId = -1;
 
     // Конструктор инициализации VkApiClient

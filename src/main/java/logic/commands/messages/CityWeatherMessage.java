@@ -4,6 +4,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import logic.commands.Weather;
+import logic.weather.parser.WeatherParser;
 import org.jsoup.HttpStatusException;
 import vk.VKConfig;
 
@@ -23,6 +24,7 @@ public class CityWeatherMessage extends ResponseMessage{
         String city = userText.substring(7);
         System.out.println(city);
         Weather weather = null;
+        WeatherParser weatherApi = new WeatherParser(city);
         try {
             weather = new Weather(city);
         } catch (HttpStatusException e) {
@@ -36,15 +38,13 @@ public class CityWeatherMessage extends ResponseMessage{
             e.printStackTrace();
         }
         assert weather != null;
-        try {
-            getConfig().getVk().messages()
-                    .send(getConfig().getActor())
-                    .message(weather.getWeather())
-                    .userId(getMessage().getFromId())
-                    .randomId(random.nextInt(10000))
-                    .execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        getConfig().getVk().messages()
+                .send(getConfig().getActor())
+                .message(weatherApi.getWeather()) // тут я поменял на метод из класса WeatherApi
+                .userId(getMessage().getFromId())
+                .randomId(random.nextInt(10000))
+                .execute();
+
+
     }
 }
