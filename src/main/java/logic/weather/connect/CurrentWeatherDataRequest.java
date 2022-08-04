@@ -8,16 +8,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Properties;
 
+// todo Перенести класс в OpenWeather
 public class CurrentWeatherDataRequest implements WeatherDataRequest {
-    private final String apiKey;
+    private static final String apiKey = setApiKey();
     private final String city;
 
     public CurrentWeatherDataRequest(String city) {
-        this.city = city;
-        this.apiKey = setApiKey();
+        this.city = city.replace(' ','+');
     }
 
-    private String setApiKey() {
+    private static String setApiKey() {
         String api_key = null;
         Properties properties = new Properties();
         try {
@@ -31,7 +31,7 @@ public class CurrentWeatherDataRequest implements WeatherDataRequest {
     }
 
     @Override
-    public String getWeatherInfo() throws IllegalArgumentException {
+    public String getWeatherInfo(String city) throws IllegalArgumentException {
         String url = String.format("https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&lang=ru&units=metric", city, apiKey);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();

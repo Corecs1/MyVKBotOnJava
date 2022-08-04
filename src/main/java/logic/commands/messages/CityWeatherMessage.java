@@ -3,18 +3,18 @@ package logic.commands.messages;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
-import logic.commands.Weather;
-import logic.weather.parser.WeatherParser;
+import logic.weather.parser.OpenWeather;
 import org.jsoup.HttpStatusException;
 import vk.VKConfig;
 
-import java.io.IOException;
 import java.util.Random;
 
-public class CityWeatherMessage extends ResponseMessage{
+public class CityWeatherMessage extends ResponseMessage {
+    private OpenWeather openWeather;
 
     public CityWeatherMessage(VKConfig config, Message message) throws ClientException, ApiException {
         super(config, message);
+        openWeather = new OpenWeather();
     }
 
     @Override
@@ -23,28 +23,17 @@ public class CityWeatherMessage extends ResponseMessage{
         Random random = new Random();
         String city = userText.substring(7);
         System.out.println(city);
-        Weather weather = null;
-        WeatherParser weatherApi = new WeatherParser(city);
+        String weather = "Для города " + city + " информация о погоде отсутствует";
         try {
-            weather = new Weather(city);
+            weather = openWeather.getWeather(city);
         } catch (HttpStatusException e) {
-            getConfig().getVk().messages()
-                    .send(getConfig().getActor())
-                    .message("Для города " + city + " информация о погоде отсутствует")
-                    .userId(getMessage().getFromId())
-                    .randomId(random.nextInt(10000))
-                    .execute();
-        } catch (IOException e) {
             e.printStackTrace();
         }
-        assert weather != null;
         getConfig().getVk().messages()
                 .send(getConfig().getActor())
-                .message(weatherApi.getWeather()) // тут я поменял на метод из класса WeatherApi
+                .message(weather) // тут я поменял на метод из класса WeatherApi
                 .userId(getMessage().getFromId())
                 .randomId(random.nextInt(10000))
                 .execute();
-
-
     }
 }

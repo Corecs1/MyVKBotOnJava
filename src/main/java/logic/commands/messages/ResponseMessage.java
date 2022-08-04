@@ -5,6 +5,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.users.Fields;
 import com.vk.api.sdk.objects.users.responses.GetResponse;
+import org.jsoup.HttpStatusException;
 import vk.VKConfig;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public abstract class ResponseMessage {
         return userInfo;
     }
 
-    public abstract void sendMessage() throws ClientException, ApiException;
+    public abstract void sendMessage() throws ClientException, ApiException, HttpStatusException;
 
     void sendMessagePattern(String text) throws ClientException, ApiException {
         Random random = new Random();

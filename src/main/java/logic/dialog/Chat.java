@@ -8,6 +8,7 @@ import com.vk.api.sdk.objects.users.responses.GetResponse;
 import com.vk.api.sdk.queries.messages.MessagesGetLongPollHistoryQuery;
 import logic.commands.CommandsFactory;
 import logic.commands.messages.MessageTypes;
+import org.jsoup.HttpStatusException;
 import vk.VKConfig;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class Chat {
         System.out.println(userInfo);
     }
 
-    public void startChat() throws ClientException, ApiException {
+    public void startChat() throws ClientException, ApiException, HttpStatusException {
         initMessages();
         if (!messages.isEmpty()) {
             for (Message message : messages) {

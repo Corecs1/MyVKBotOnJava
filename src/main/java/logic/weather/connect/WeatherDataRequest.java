@@ -1,6 +1,5 @@
 package logic.weather.connect;
 
 public interface WeatherDataRequest {
-
-    public String getWeatherInfo();
+    public String getWeatherInfo(String city);
 }

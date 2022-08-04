@@ -3,6 +3,7 @@ package vk;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import logic.dialog.Chat;
+import org.jsoup.HttpStatusException;
 
 public class VKServer {
     public static VKConfig vkConfig;
@@ -17,7 +18,7 @@ public class VKServer {
         }
     }
 
-    public static void main(String[] args) throws ClientException, ApiException, InterruptedException {
+    public static void main(String[] args) throws ClientException, ApiException, InterruptedException, HttpStatusException {
         System.out.println("Running server");
         while (true) {
             Thread.sleep(500);

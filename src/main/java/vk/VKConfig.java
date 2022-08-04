@@ -22,6 +22,19 @@ public class VKConfig {
         loadConfigs();
     }
 
+    private static String setApiKey() {
+        String api_key = null;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream("src/main/resources/vkconfig.properties"));
+            api_key = properties.getProperty("api_key");
+        } catch (IOException e) {
+            System.out.println("Error load API key");
+            e.printStackTrace();
+        }
+        return api_key;
+    }
+
     // Метод загрузки конфигов
     private void loadConfigs() throws ClientException, ApiException {
         System.out.println("Starting load configs...");

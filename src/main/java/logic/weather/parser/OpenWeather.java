@@ -6,19 +6,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import logic.weather.connect.CurrentWeatherDataRequest;
 import logic.weather.connect.WeatherDataRequest;
+import org.jsoup.HttpStatusException;
 
-public class WeatherParser {
-    private String city;
-
-    public WeatherParser(String city) {
-        this.city = city;
-    }
-
-    public String getWeather() {
-        String weatherInfo = null;
+public class OpenWeather {
+    public String getWeather(String cityName) throws HttpStatusException {
+        String weatherInfo;
         try {
-            WeatherDataRequest request = new CurrentWeatherDataRequest(city);
-            String text = request.getWeatherInfo();
+            WeatherDataRequest request = new CurrentWeatherDataRequest(cityName);
+            String text = request.getWeatherInfo(cityName);
 
             System.out.println(text);
 
@@ -39,12 +34,12 @@ public class WeatherParser {
             JsonObject jsonWeatherObject = (JsonObject) weatherArray.get(0);
             JsonElement jsonElementWeather = jsonWeatherObject.get("description");
             String description = jsonElementWeather.getAsString();
-            System.out.println(city + ", " + temperature + "°C, " + description + " Атмосферное давление " + pressure + " hPa");
-            weatherInfo = city + ", " + temperature + "°C, " + description + ", Атмосферное давление: " + pressure + " hPa";
+            System.out.println(city + ", " + temperature + "°C, " + description + " Атмосферное давление " + pressure + " гПa");
+            weatherInfo = city + ", " + temperature + "°C, " + description + ", Атмосферное давление: " + pressure + " гПa";
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println("Incorrect city name");
-            weatherInfo = ("К сожалению не удалось получить информацию.\n"  + "Проверьте корректность введенного города") ;
+            throw new HttpStatusException("К сожалению не удалось получить информацию.\n"  + "Проверьте корректность введенного города", 404, "");
         }
         return weatherInfo;
     }
