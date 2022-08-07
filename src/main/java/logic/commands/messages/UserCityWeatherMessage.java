@@ -1,14 +1,13 @@
 package logic.commands.messages;
 
+import com.vk.api.sdk.actions.Upload;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
-import logic.commands.Weather;
+import logic.weather.parser.OpenWeather;
 import vk.VKConfig;
 
-import java.io.IOException;
-
-public class UserCityWeatherMessage extends ResponseMessage{
+public class UserCityWeatherMessage extends ResponseMessage {
 
     public UserCityWeatherMessage(VKConfig config, Message message) throws ClientException, ApiException {
         super(config, message);
@@ -20,18 +19,8 @@ public class UserCityWeatherMessage extends ResponseMessage{
         if (userCity.equals("null")) {
             sendMessagePattern("К сожалению информация о городе скрыта в твоём профиле");
         } else {
-            Weather weather = null;
-            try {
-                weather = new Weather(getUserInfo().get(0).getCity().getTitle());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            assert weather != null;
-            try {
-               sendMessagePattern(weather.getWeather());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            OpenWeather weather = new OpenWeather(getUserInfo().get(0).getCity().getTitle());
+            sendMessagePattern(weather.getWeather());
         }
     }
 }
