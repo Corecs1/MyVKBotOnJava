@@ -12,14 +12,27 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class VKConfig {
-    private static VkApiClient vk;
+    private VkApiClient vk;
     private static int ts;
-    private static GroupActor actor;
+    private GroupActor actor;
     private int maxMsgId = -1;
 
     // Конструктор инициализации VkApiClient
     public VKConfig() throws ClientException, ApiException {
         loadConfigs();
+    }
+
+    private static String setApiKey() {
+        String api_key = null;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream("src/main/resources/vkconfig.properties"));
+            api_key = properties.getProperty("api_key");
+        } catch (IOException e) {
+            System.out.println("Error load API key");
+            e.printStackTrace();
+        }
+        return api_key;
     }
 
     // Метод загрузки конфигов
@@ -57,5 +70,9 @@ public class VKConfig {
 
     public int getMaxMsgId() {
         return maxMsgId;
+    }
+
+    public static void setTs(int ts) {
+        VKConfig.ts = ts;
     }
 }
