@@ -69,7 +69,6 @@ public class OpenWeatherForPicture {
                     pressureString,
                     humidityString);
             weatherPicture.createPngPicture();
-
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println("Incorrect city name");

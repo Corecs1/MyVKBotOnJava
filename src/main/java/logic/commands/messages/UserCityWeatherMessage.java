@@ -1,11 +1,12 @@
 package logic.commands.messages;
 
-import com.vk.api.sdk.actions.Upload;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
-import logic.weather.parser.OpenWeather;
+import logic.weather.parser.OpenWeatherForPicture;
 import vk.VKConfig;
+
+import java.io.File;
 
 public class UserCityWeatherMessage extends ResponseMessage {
 
@@ -19,8 +20,10 @@ public class UserCityWeatherMessage extends ResponseMessage {
         if (userCity.equals("null")) {
             sendMessagePattern("К сожалению информация о городе скрыта в твоём профиле");
         } else {
-            OpenWeather weather = new OpenWeather(getUserInfo().get(0).getCity().getTitle());
-            sendMessagePattern(weather.getWeather());
+            OpenWeatherForPicture openWeather = new OpenWeatherForPicture(getUserInfo().get(0).getCity().getTitle());
+            openWeather.getWeather();
+            File picture = new File("src\\main\\resources\\WeatherCascade.png");
+            sendPicturePattern(picture);
         }
     }
 }
