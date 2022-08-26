@@ -60,6 +60,8 @@ public class Chat {
                     commandsFactory.getMessage(MessageTypes.INFO).sendMessage();
                 } else if (userText.matches("погода [а-я]+(\\s|-)?[а-я]*")) {
                     commandsFactory.getMessage(MessageTypes.CITY_WEATHER).sendMessage();
+                } else if (userText.equals("картинка")) {
+                    commandsFactory.getMessage(MessageTypes.GET_PICTURE).sendMessage();
                 } else {
                     commandsFactory.getMessage(MessageTypes.UNKNOWN).sendMessage();
                 }

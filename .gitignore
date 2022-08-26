@@ -1,3 +1,11 @@
 /src/main/resources/vkconfig.properties
 
+/.idea/
 /src/main/resources/cities_ru_en.csv
+/src/main/resources/helloWorld.jpg
+/src/main/resources/WeatherCascade.png
+/src/main/resources/WeatherCascade.svg
+/VkBot.cdb
+/VkBot.cdm
+/Workspace.sws
+/target/

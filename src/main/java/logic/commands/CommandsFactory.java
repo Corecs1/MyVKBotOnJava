@@ -36,6 +36,9 @@ public class CommandsFactory {
             case INFO:
                 toReturn = new InfoMessage(config, message);
                 break;
+            case GET_PICTURE:
+                toReturn = new PictureMessage(config, message);
+                break;
             default:
                 throw new IllegalArgumentException("Wrong message type " + type);
         }
