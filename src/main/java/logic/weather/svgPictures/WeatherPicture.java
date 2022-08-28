@@ -6,7 +6,6 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 
 import java.io.*;
@@ -29,42 +28,6 @@ public class WeatherPicture {
         this.pressure = pressure;
         this.humidity = humidity;
     }
-
-    // Тут можно прочитать внутрянку
-//    private Document createSVGDocument() throws IOException {
-//        String path = "src/main/resources/WeatherCascade.svg";
-//        String parser = XMLResourceDescriptor.getXMLParserClassName();
-//        SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(parser);
-//        return factory.createDocument(path);
-//    }
-
-    // Метод для преобразования готового SVG к PNG/JPEG
-//    public File getPicture() {
-//        OutputStream pngStream = null;
-//
-//        String svgUriInput = "src/main/resources/WeatherCascade.svg";
-//        TranscoderInput inputSvgImage = new TranscoderInput(svgUriInput);
-//        try {
-//            pngStream = new FileOutputStream("src/main/resources/WeatherCascade.png");
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        TranscoderOutput outputPngImage = new TranscoderOutput(pngStream);
-//        PNGTranscoder myConverter = new PNGTranscoder();
-//        try {
-//            myConverter.transcode(inputSvgImage, outputPngImage);
-//        } catch (TranscoderException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                pngStream.flush();
-//                pngStream.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return null;
-//    }
 
     public void createPngPicture() throws IOException {
         OutputStream pngStream = null;
