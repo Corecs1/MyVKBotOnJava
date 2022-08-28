@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import logic.weather.svgPictures.WeatherPicture;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,18 +14,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Properties;
 
-public class OpenWeather {
+public class OpenWeatherForPicture {
     private static final String apiKey = setApiKey();
     private final String city;
     private static final double CONVERSION_COEFFICIENT = 0.75;
 
-    public OpenWeather(String city) {
+    public OpenWeatherForPicture(String city) {
         this.city = city.replace(' ', '+');
     }
 
-    public String getWeather() throws RuntimeException {
-        String weatherInfo;
-
+    public void getWeather() throws RuntimeException {
         try {
             String text = getWeatherInfo();
             System.out.println(text);
@@ -56,18 +55,27 @@ public class OpenWeather {
             JsonElement jsonElementWeather = jsonWeatherObject.get("description");
             String description = jsonElementWeather.getAsString();
 
-            String info = city + ", " + country + ", " + temperature + "°C, " + description +
-                    ".\nВетер: " + windSpeed + " м/с." +
-                    "\n Атмосферное давление: " + pressure + " мм рт.ст." +
-                    "\n Влажность воздуха: " + humidity + "%.";
-            System.out.println(info);
-            weatherInfo = info;
+            String temperatureString = temperature + "°C";
+            String windString = windSpeed + " м/с.";
+            String pressureString = pressure + " мм рт.ст.";
+            String humidityString = humidity + "%.";
+
+            WeatherPicture weatherPicture = new WeatherPicture(
+                    temperatureString,
+                    city,
+                    country,
+                    description,
+                    windString,
+                    pressureString,
+                    humidityString);
+            weatherPicture.createPngPicture();
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println("Incorrect city name");
             throw new RuntimeException("К сожалению не удалось получить информацию.\n" + "Проверьте корректность введенного города");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return weatherInfo;
     }
 
     private String getWeatherInfo() throws IllegalArgumentException {

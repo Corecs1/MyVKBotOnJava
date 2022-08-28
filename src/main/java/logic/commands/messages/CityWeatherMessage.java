@@ -3,8 +3,10 @@ package logic.commands.messages;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
-import logic.weather.parser.OpenWeather;
+import logic.weather.parser.OpenWeatherForPicture;
 import vk.VKConfig;
+
+import java.io.File;
 
 public class CityWeatherMessage extends ResponseMessage {
 
@@ -19,11 +21,13 @@ public class CityWeatherMessage extends ResponseMessage {
         System.out.println(city);
         String weather = "Для города " + city + " информация о погоде отсутствует\nПроверьте корректность введенного города";
         try {
-            OpenWeather openWeather = new OpenWeather(city);
-            weather = openWeather.getWeather();
+            OpenWeatherForPicture openWeather = new OpenWeatherForPicture(city);
+            openWeather.getWeather();
+            File picture = new File("src\\main\\resources\\WeatherCascade.png");
+            sendPicturePattern(picture);
         } catch (RuntimeException e) {
             e.printStackTrace();
+            sendMessagePattern(weather);
         }
-        sendMessagePattern(weather);
     }
 }

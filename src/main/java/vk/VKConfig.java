@@ -46,7 +46,7 @@ public class VKConfig {
         try {
             properties.load(new FileInputStream("src/main/resources/vkconfig.properties"));
             groupId = Integer.parseInt(properties.getProperty("group_id"));
-            access_token = properties.getProperty("access_token");
+            access_token = properties.getProperty("picture_access_token");
             actor = new GroupActor(groupId, access_token);
             ts = vk.messages().getLongPollServer(actor).execute().getTs();
         } catch (IOException e) {

@@ -6,5 +6,6 @@ public enum MessageTypes {
     CITY_WEATHER,
     INFO,
     BUTTONS,
-    UNKNOWN
+    UNKNOWN,
+    GET_PICTURE
 }
