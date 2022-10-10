@@ -9,6 +9,8 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.svg.SVGDocument;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class WeatherPicture {
     private final String temp;
@@ -18,8 +20,9 @@ public class WeatherPicture {
     private final String wind;
     private final String pressure;
     private final String humidity;
+    private final String weatherCondition;
 
-    public WeatherPicture(String temp, String city, String country, String description, String wind, String pressure, String humidity) {
+    public WeatherPicture(String temp, String city, String country, String description, String wind, String pressure, String humidity, String weatherCondition) {
         this.temp = temp;
         this.city = city;
         this.country = country;
@@ -27,6 +30,7 @@ public class WeatherPicture {
         this.wind = wind;
         this.pressure = pressure;
         this.humidity = humidity;
+        this.weatherCondition = weatherCondition;
     }
 
     public void createPngPicture() throws IOException {
@@ -63,25 +67,37 @@ public class WeatherPicture {
         return svgPicture;
     }
 
-    private String setSVGText() {
-        String svgText = String.format("<svg width=\"400\" height=\"460\" viewBox=\"0 0 400 460\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n" +
-                "<g style=\"mix-blend-mode:darken\">\n" +
-                "<rect width=\"400\" height=\"460\" rx=\"15\" fill=\"url(#paint0_linear_7_2)\"/>\n" +
-                "</g>\n" +
-                "<text fill=\"black\" xml:space=\"preserve\" style=\"white-space: pre\" font-family=\"Inter\" font-size=\"38\" font-weight=\"600\" letter-spacing=\"0em\"><tspan x=\"214.508\" y=\"94.3182\">%s</tspan></text>\n" +
-                "<text fill=\"black\" xml:space=\"preserve\" style=\"white-space: pre\" font-family=\"Inter\" font-size=\"30\" letter-spacing=\"0em\"><tspan x=\"9\" y=\"76.4091\">%s</tspan></text>\n" +
-                "<text fill=\"black\" xml:space=\"preserve\" style=\"white-space: pre\" font-family=\"Inter\" font-size=\"30\" letter-spacing=\"0em\"><tspan x=\"9\" y=\"167.409\">%s</tspan></text>\n" +
-                "<text fill=\"black\" xml:space=\"preserve\" style=\"white-space: pre\" font-family=\"Inter\" font-size=\"30\" letter-spacing=\"0em\"><tspan x=\"10\" y=\"239.409\">%s</tspan></text>\n" +
-                "<text fill=\"black\" xml:space=\"preserve\" style=\"white-space: pre\" font-family=\"Inter\" font-size=\"26\" font-weight=\"300\" letter-spacing=\"0em\"><tspan x=\"10\" y=\"395.955\">Ветер: %s</tspan></text>\n" +
-                "<text fill=\"black\" xml:space=\"preserve\" style=\"white-space: pre\" font-family=\"Inter\" font-size=\"26\" font-weight=\"300\" letter-spacing=\"0em\"><tspan x=\"10\" y=\"348.955\">Давление: %s</tspan></text>\n" +
-                "<text fill=\"black\" xml:space=\"preserve\" style=\"white-space: pre\" font-family=\"Inter\" font-size=\"26\" font-weight=\"300\" letter-spacing=\"0em\"><tspan x=\"10\" y=\"301.955\">Влажность: %s</tspan></text>\n" +
-                "<defs>\n" +
-                "<linearGradient id=\"paint0_linear_7_2\" x1=\"200\" y1=\"0\" x2=\"200\" y2=\"460\" gradientUnits=\"userSpaceOnUse\">\n" +
-                "<stop offset=\"0.119792\" stop-color=\"#F7FF97\" stop-opacity=\"0.96\"/>\n" +
-                "<stop offset=\"1\" stop-color=\"#F9FFB4\" stop-opacity=\"0\"/>\n" +
-                "</linearGradient>\n" +
-                "</defs>\n" +
-                "</svg>\n", this.temp, this.city, this.country, this.description, this.wind, this.pressure, this.humidity);
-        return svgText;
+    private String setSVGText() throws IOException {
+        String replacement = "%s";
+        String svgText = selectSvgCascade();
+        String replacedSvgText = svgText
+                .replace("Temp", replacement)
+                .replace("City", replacement)
+                .replace("Country", replacement)
+                .replace("Описание", replacement);
+        return String.format(replacedSvgText, this.temp, this.city, this.country, this.description, this.humidity, this.pressure, this.wind);
+    }
+
+    private String selectSvgCascade() throws IOException {
+        String trimmedWeatherCondition = weatherCondition.substring(0, 2);
+        if (trimmedWeatherCondition.equals("01")) {
+            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade1.svg")));
+        }
+        if (trimmedWeatherCondition.equals("02") || trimmedWeatherCondition.equals("03") || trimmedWeatherCondition.equals("04")) {
+            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade2-4.svg")));
+        }
+        if (trimmedWeatherCondition.equals("09") || trimmedWeatherCondition.equals("10")) {
+            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade9-10.svg")));
+        }
+        if (trimmedWeatherCondition.equals("11")) {
+            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade11.svg")));
+        }
+        if (trimmedWeatherCondition.equals("13")) {
+            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade13.svg")));
+        }
+        if (trimmedWeatherCondition.equals("50")) {
+            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade50.svg")));
+        }
+        return "Unidentified weather condition";
     }
 }

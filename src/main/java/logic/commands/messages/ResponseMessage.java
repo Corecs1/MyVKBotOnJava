@@ -57,6 +57,7 @@ public abstract class ResponseMessage {
         Random random = new Random();
         GetMessagesUploadServerResponse uploadServerResponse = getConfig().getVk().photos().getMessagesUploadServer(getConfig().getActor()).execute();
         MessageUploadResponse messageUploadResponse = getConfig().getVk().upload().photoMessage(uploadServerResponse.getUploadUrl().toString(), picture).execute();
+        picture.delete();
         List<SaveMessagesPhotoResponse> photoList = getConfig()
                 .getVk()
                 .photos()

@@ -54,6 +54,8 @@ public class OpenWeatherForPicture {
             JsonObject jsonWeatherObject = (JsonObject) weatherArray.get(0);
             JsonElement jsonElementWeather = jsonWeatherObject.get("description");
             String description = jsonElementWeather.getAsString();
+            jsonElementWeather = jsonWeatherObject.get("icon");
+            String weatherCondition = jsonElementWeather.getAsString();
 
             String temperatureString = temperature + "°C";
             String windString = windSpeed + " м/с.";
@@ -67,7 +69,8 @@ public class OpenWeatherForPicture {
                     description,
                     windString,
                     pressureString,
-                    humidityString);
+                    humidityString,
+                    weatherCondition);
             weatherPicture.createPngPicture();
         } catch (RuntimeException e) {
             e.printStackTrace();
