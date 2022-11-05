@@ -82,7 +82,7 @@ public class OpenWeatherForPicture {
     }
 
     private String getWeatherInfo() throws IllegalArgumentException {
-        String url = String.format("https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&lang=ru&units=metric", this.city, apiKey);
+        String url = String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&lang=ru&units=metric", this.city, apiKey);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
         String text = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())

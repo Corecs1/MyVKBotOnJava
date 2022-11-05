@@ -10,6 +10,7 @@ import logic.commands.CommandsFactory;
 import logic.commands.messages.MessageTypes;
 import vk.VKConfig;
 
+import java.util.Date;
 import java.util.List;
 
 public class Chat {
@@ -34,6 +35,7 @@ public class Chat {
 
     private void logging(Message message) throws ClientException, ApiException {
         System.out.println(message.getText());
+        System.out.println(new Date(message.getDate()*1000L));
         List<GetResponse> userInfo = config.getVk().users()
                 .get(config.getActor())
                 .userIds(String.valueOf(message.getFromId()))
