@@ -9,8 +9,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.svg.SVGDocument;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Objects;
 
 public class WeatherPicture {
     private final String temp;
@@ -81,23 +80,28 @@ public class WeatherPicture {
     private String selectSvgCascade() throws IOException {
         String trimmedWeatherCondition = weatherCondition.substring(0, 2);
         if (trimmedWeatherCondition.equals("01")) {
-            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade1.svg")));
+            return readSvgFileByPath("/weatherCascades/Cascade1.svg");
         }
         if (trimmedWeatherCondition.equals("02") || trimmedWeatherCondition.equals("03") || trimmedWeatherCondition.equals("04")) {
-            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade2-4.svg")));
+            return readSvgFileByPath("/weatherCascades/Cascade2-4.svg");
         }
         if (trimmedWeatherCondition.equals("09") || trimmedWeatherCondition.equals("10")) {
-            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade9-10.svg")));
+            return readSvgFileByPath("/weatherCascades/Cascade9-10.svg");
         }
         if (trimmedWeatherCondition.equals("11")) {
-            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade11.svg")));
+            return readSvgFileByPath("/weatherCascades/Cascade11.svg");
         }
         if (trimmedWeatherCondition.equals("13")) {
-            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade13.svg")));
+            return readSvgFileByPath("/weatherCascades/Cascade13.svg");
         }
         if (trimmedWeatherCondition.equals("50")) {
-            return new String(Files.readAllBytes(Paths.get("src\\main\\resources\\weatherCascades\\Cascade50.svg")));
+            return readSvgFileByPath("/weatherCascades/Cascade50.svg");
         }
         return "Unidentified weather condition";
+    }
+
+    private String readSvgFileByPath(String URL) throws IOException {
+        InputStream inputStream = this.getClass().getResourceAsStream(URL);
+        return new String(Objects.requireNonNull(inputStream).readAllBytes());
     }
 }
